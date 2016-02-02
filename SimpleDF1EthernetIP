@@ -1,0 +1,630 @@
+//Param1=tipo arquivo:item
+//Param2=nó
+//Exemplo: Param1=N7:1 Param2=0
+ldriver 3.0
+:T=Param1[1,1]
+:N=Param1[2,':']
+:E=Param1[':','/']
+:s1=Param1['/','']
+:S=0
+:barra=Param1['/','/']
+:ponto1=Param1['.','.']
+:letratimer1=Param1['.','']
+:ETimer=Param1[':','.']
+:qtde=TotalDeItens
+
+?T='O'
+:qtde=1
+
+?T='O'
+?ponto1=1
+:N=0
+:B=Param1[':','.']
+:E=Param1['.','/']
+:ponto1=0
+:letratimer1=0
+:ETimer=0
+
+?T='I'
+:qtde=1
+
+?T='I'
+?ponto1=1
+:N=1
+:B=Param1[':','.']
+:E=Param1['.','/']
+:ponto1=0
+:letratimer1=0
+:ETimer=0
+
+:TimeOut1=5
+:status=0
+:context=0
+:options=0
+:CIP=0
+
+?qtde>30
+:qtde=30
+
+?qtde=0
+:qtde=1
+
+:Try=1
+:NoCloseComTry=0
+:NoCloseCom=0
+:TimeOut=1000
+:TimeOutByte=50
+:CacheTimeOut=100
+:p1=44+IPCONFLEN
+:p2=43+IPCONFLEN
+:BufferDontCare=p1
+:BufferDontCareBytes=2
+
+:Especial=int(E/qtde)
+
+$GETGLOBAL(TNS)
+
+?TNS=0
+:TNS=17
+
+:TNS=TNS+1
+
+?TNS>271
+:TNS=17
+
+$SETGLOBAL(TNS)
+
+:tipotamanho=2
+:tamanho=tipotamanho*qtde
+:DST=Param2
+
+:headerlen=27+IPCONFLEN
+
+:session=0
+:x1=0
+
+$GETGLOBAL(session)
+
+/////////:session=0
+:erro=0
+
+?session=0
+:context=0
+:CacheTimeOut=0
+>0x65 0x00 0x04 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x01 0x00 0x00 0x00
+<0x65 0x00 0x04 0x00 (DWORD)*x1 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x01 0x00 0x00 0x00
+:session=x1
+$SETGLOBAL(session)
+
+:x1=session
+
+:CacheTimeOut=100
+
+?erro>0
+$EXIT(5)
+
+:tam=tamanho+4
+
+?headerlen=27
+$EXIT(0)
+
+?Comando=1 //Leitura N7:0
+?T='N' //(integer)
+:T=0x89
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0A 0x00 0x0F 0x00 (WORD)TNS 0xA2 tamanho N T E.qtde.item S
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)tam 0x4F 0x00 (WORD)*TNS ...tamanho<E.qtde.subitem>(WORD)*Valor
+.
+
+?Comando=1 // T4:1.ACC
+?T='T' //(Timer) (word)
+?letratimer1='A'
+:E=ETimer
+:T=0x86
+:tipotamanho=6
+:tamanho=tipotamanho*qtde
+:tam=tamanho+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0A 0x00 0x0F 0x00 (WORD)TNS 0xA2 tamanho N T E.qtde.item S
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)tam 0x4F 0x00 (WORD)*TNS ...tamanho<E.qtde.subitem>(WORD[6,5])*Valor
+.
+
+?Comando=1 // T4:1.PRE
+?T='T' //(Timer) (word)
+?letratimer1='P'
+:E=ETimer
+:T=0x86
+:tipotamanho=6
+:tamanho=tipotamanho*qtde
+:tam=tamanho+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0A 0x00 0x0F 0x00 (WORD)TNS 0xA2 tamanho N T E.qtde.item S
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)tam 0x4F 0x00 (WORD)*TNS ...tamanho<E.qtde.subitem>(WORD[6,3])*Valor
+.
+
+?letratimer1='E'  // T4:1.EN
+:s1=15
+
+?letratimer1='T' // T4:1.TT
+:s1=14
+
+?letratimer1='D' // T4:1.DN
+:s1=13
+
+?Comando=1 // T4:1.XX
+?T='T' //(Timer) (word)
+?letratimer1>0
+:E=ETimer
+:T=0x86
+:tipotamanho=6
+:tamanho=tipotamanho*qtde
+:tam=tamanho+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0A 0x00 0x0F 0x00 (WORD)TNS 0xA2 tamanho N T E.qtde.item S
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)tam 0x4F 0x00 (WORD)*TNS ...tamanho<E.qtde.subitem>(WORD[6,1])*Valor
+:Valor=Bit(Valor,s1,s1)
+.
+
+?Comando=1 // T4:1.ACC
+?T='T' //(Timer) (word)
+?letratimer1='A'
+:E=ETimer
+:T=0x86
+:tipotamanho=6
+:tamanho=tipotamanho*qtde
+:tam=tamanho+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0A 0x00 0x0F 0x00 (WORD)TNS 0xA2 tamanho N T E.qtde.item S
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x06 0x00 0x4F 0x00 (WORD)*TNS ...tamanho<E.qtde.subitem>(WORD[6,5])*Valor
+
+?Comando=1 // C5:1.PRE
+?T='C' //(Timer) (word)
+?letratimer1='P'
+:E=ETimer
+:T=0x87
+:tipotamanho=6
+:tamanho=tipotamanho*qtde
+:tam=tamanho+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0A 0x00 0x0F 0x00 (WORD)TNS 0xA2 tamanho N T E.qtde.item S
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)tam 0x4F 0x00 (WORD)*TNS ...tamanho<E.qtde.subitem>(WORD[6,3])*Valor
+.
+
+?Comando=1 // C5:1.ACC
+?T='C' //(Timer) (word)
+?letratimer1='A'
+:E=ETimer
+:T=0x87
+:tipotamanho=6
+:tamanho=tipotamanho*qtde
+:tam=tamanho+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0A 0x00 0x0F 0x00 (WORD)TNS 0xA2 tamanho N T E.qtde.item S
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)tam 0x4F 0x00 (WORD)*TNS ...tamanho<E.qtde.subitem>(WORD[6,5])*Valor
+.
+
+?T='C' //(Counter) (bit)
+?letratimer1='C'  // C5:1.CX
+:letratimer2=Param1['U','U']
+
+?letratimer1='C'  // C5:1.CU
+?letratimer2=1
+:s1=15
+
+?letratimer1='C'  // C5:1.CD
+?letratimer2=0
+:s1=14
+
+?letratimer1='D'  // C5:1.DN
+:s1=13
+
+?letratimer1='O'  // C5:1.OV
+:s1=12
+
+?T='C' //(Counter) (bit)
+?letratimer1='U'  // C5:1.UX
+:letratimer2=Param1['N','N']
+
+?letratimer1='U'  // C5:1.UN
+?letratimer2=1
+:s1=11
+
+?letratimer1='U'  // C5:1.UA
+?letratimer2=0
+:s1=10
+
+?Comando=1 // C5:1.XX
+?T='C' //(Timer) (word)
+?letratimer1>0
+:E=ETimer
+:T=0x87
+:tipotamanho=6
+:tamanho=tipotamanho*qtde
+:tam=tamanho+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0A 0x00 0x0F 0x00 (WORD)TNS 0xA2 tamanho N T E.qtde.item S
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)tam 0x4F 0x00 (WORD)*TNS ...tamanho<E.qtde.subitem>(WORD[6,1])*Valor
+:Valor=Bit(Valor,s1,s1)
+.
+
+?Comando=1 // R6:1.LEN
+?T='R' //(Control) (word)
+?letratimer1='L'
+:E=ETimer
+:T=0x88
+:tipotamanho=6
+:tamanho=tipotamanho*qtde
+:tam=tamanho+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0A 0x00 0x0F 0x00 (WORD)TNS 0xA2 tamanho N T E.qtde.item S
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)tam 0x4F 0x00 (WORD)*TNS ...tamanho<E.qtde.subitem>(WORD[6,3])*Valor
+.
+
+?Comando=1 // R6:1.POS
+?T='R' //(Counter) (word)
+?letratimer1='P'
+:E=ETimer
+:T=0x88
+:tipotamanho=6
+:tamanho=tipotamanho*qtde
+:tam=tamanho+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0A 0x00 0x0F 0x00 (WORD)TNS 0xA2 tamanho N T E.qtde.item S
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)tam 0x4F 0x00 (WORD)*TNS ...tamanho<E.qtde.subitem>(WORD[6,5])*Valor
+.
+
+?Comando=1 // R6:1.XX
+?T='R' //(Counter) (bit)
+:letratimerN=Param1['N','N']
+:letratimerU=Param1['U','U']
+:letratimerM=Param1['M','M']
+
+?Comando=1 // R6:1.XX
+?T='R' //(Counter) (bit)
+?letratimer1='E'  // R6:1.ER
+:s1=11
+
+?letratimer1='E'  // R6:1.EN
+?letratimerN=1
+:s1=15
+
+?letratimer1='E'  // R6:1.EU
+?letratimerU=1
+:s1=14
+
+?letratimer1='D'  // R6:1.DN
+:s1=13
+
+?letratimer1='E'  // R6:1.EM
+?letratimerM=1
+:s1=12
+
+?letratimer1='U'  // R6:1.UL
+:s1=10
+
+?letratimer1='I'  // R6:1.IN
+:s1=9
+
+?letratimer1='F'  // R6:1.FD
+:s1=8
+
+?Comando=1 // R6:1.XX
+?T='R' //(Counter) (bit)
+?letratimer1>0
+:E=ETimer
+:T=0x88
+:tipotamanho=6
+:tamanho=tipotamanho*qtde
+:tam=tamanho+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0A 0x00 0x0F 0x00 (WORD)TNS 0xA2 tamanho N T E.qtde.item S
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)tam 0x4F 0x00 (WORD)*TNS ...tamanho<E.qtde.subitem>(WORD[6,1])*Valor
+:Valor=Bit(Valor,s1,s1)
+.
+
+?Comando=1 // B3:1/15
+?T='B' //(Bit) (word)
+?barra=1
+:T=0x85
+:tam=tamanho+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0A 0x00 0x0F 0x00 (WORD)TNS 0xA2 tamanho N T E.qtde.item S
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)tam 0x4F 0x00 (WORD)*TNS ...tamanho<E.qtde.subitem>(WORD)*Valor
+:Valor=Bit(Valor,s1,s1)
+.
+
+?Comando=1 // B3:1
+?T='B' //(Bit) (word)
+:T=0x85
+:tam=tamanho+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0A 0x00 0x0F 0x00 (WORD)TNS 0xA2 tamanho N T E.qtde.item S
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)tam 0x4F 0x00 (WORD)*TNS ...tamanho<E.qtde.subitem>(WORD)*Valor
+.
+
+?Comando=1 // I1:1/15
+?T='I' //(Input) (word)
+?barra=1
+:T=0x85
+:tam=tamanho+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0A 0x00 0x0F 0x00 (WORD)TNS 0xA2 tamanho N T E.qtde.item S
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)tam 0x4F 0x00 (WORD)*TNS ...tamanho<E.qtde.subitem>(INTEGER)*Valor
+:Valor=Bit(Valor,s1,s1)
+.
+
+?Comando=1 // I1:1
+?T='I' //(Input) (word)
+:T=0x83
+:tam=tamanho+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0A 0x00 0x0F 0x00 (WORD)TNS 0xA2 tamanho N T E.qtde.item S
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)tam 0x4F 0x00 (WORD)*TNS ...tamanho<E.qtde.subitem>(INTEGER)*Valor
+.
+
+?Comando=1 // FX:1
+?T='F' //(Float)
+:T=0x8A
+:tipotamanho=4
+:tamanho=tipotamanho*qtde
+:tam=tamanho+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0A 0x00 0x0F 0x00 (WORD)TNS 0xA2 tamanho N T E.qtde.item S
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)tam 0x4F 0x00 (WORD)*TNS ...tamanho<E.qtde.subitem>(SINGLE)*Valor
+.
+
+?Comando=1 //O0:1/0
+?T='O' //(Output) (word)
+?barra=1
+:T=0x82
+:tam=tamanho+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0A 0x00 0x0F 0x00 (WORD)TNS 0xA2 tamanho N T E.qtde.item S
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)tam 0x4F 0x00 (WORD)*TNS ...tamanho<E.qtde.subitem>(WORD)*Valor
+:Valor=Bit(Valor,s1,s1)
+.
+
+?Comando=1 // OX:1
+?T='O' //(Output) (word)
+:T=0x82
+:tam=tamanho+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0A 0x00 0x0F 0x00 (WORD)TNS 0xA2 tamanho N T E.qtde.item S
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)tam 0x4F 0x00 (WORD)*TNS ...tamanho<E.qtde.subitem>(INTEGER)*Valor
+.
+
+?Comando=1 // SX:1
+?T='S' //(Status) (word)
+?barra=1
+:T=0x84
+:tam=tamanho+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0A 0x00 0x0F 0x00 (WORD)TNS 0xA2 tamanho N T E.qtde.item S
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)tam 0x4F 0x00 (WORD)*TNS ...tamanho<E.qtde.subitem>(WORD)*Valor
+:Valor=Bit(Valor,s1,s1)
+.
+
+?Comando=1 // SX:1
+?T='S' //(Status) (word)
+:T=0x84
+:tam=tamanho+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0A 0x00 0x0F 0x00 (WORD)TNS 0xA2 tamanho N T E.qtde.item S
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)tam 0x4F 0x00 (WORD)*TNS ...tamanho<E.qtde.subitem>(WORD)*Valor
+.
+
+/// *********************************** Escrita ************************************
+?Comando=2
+:CacheTimeOut=0
+:TRY=1
+
+?Comando=2 // N7:1/algo Escrita
+?barra=1
+?T='N' //(Bit) (word)
+:T=0x89
+:s1=s1+1
+:x=Valor*(s1)
+:headerlen=headerlen+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0E 0x00 0x0F 0x00 (WORD)TNS 0xAB tipotamanho N T E S (WORD)s1 (WORD)x
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)*tam 0x4F *STS (WORD)TNS
+.
+
+?Comando=2 //N7:1 Escrita
+?T='N' //(integer)
+:T=0x89
+:headerlen=headerlen+2
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0C 0x00 0x0F 0x00 (WORD)TNS 0xAA tipotamanho N T E S (INTEGER)Valor
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)*tam 0x4F *STS (WORD)TNS
+.
+
+?Comando=2 // B3:1/algo Escrita
+?barra=1
+?T='B' //(Bit) (word)
+:T=0x85
+:s1=s1+1
+:x=Valor*(s1)
+:headerlen=headerlen+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0E 0x00 0x0F 0x00 (WORD)TNS 0xAB tipotamanho N T E S (WORD)s1 (WORD)x
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x04 0x00 0x4F *STS (WORD)TNS
+.
+
+?Comando=2 // B3:1 Escrita
+?T='B' //(Bit) (word)
+:T=0x85
+:headerlen=headerlen+2
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0C 0x00 0x0F 0x00 (WORD)TNS 0xAA tipotamanho N T E S (WORD)Valor
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)*tam 0x4F *STS (WORD)TNS
+.
+
+?Comando=2 // FX:1 Escrita
+?T='F' //(Float)
+:T=0x8A
+:tipotamanho=4
+:headerlen=headerlen+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0E 0x00 0x0F 0x00 (WORD)TNS 0xAA tipotamanho N T E S (SINGLE)Valor
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)*tam 0x4F *STS (WORD)TNS
+.
+
+?Comando=2 //OX:1/1 Escrita
+?T='O'
+?barra=1
+:T=0x82
+:s1=s1+1
+:x=Valor*(s1)
+:headerlen=headerlen+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0E 0x00 0x0F 0x00 (WORD)TNS 0xAB tipotamanho N T E S (WORD)s1 (WORD)x
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)*tam 0x4F *STS (WORD)TNS
+.
+
+?Comando=2 //OX:1 Escrita
+?T='O'
+:T=0x82
+:headerlen=headerlen+2
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0C 0x00 0x0F 0x00 (WORD)TNS 0xAA tipotamanho N T E S (INTEGER)Valor
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)*tam 0x4F *STS (WORD)TNS
+.
+
+?Comando=2 //SX:1 Escrita
+?T='S'
+:T=0x84
+:headerlen=headerlen+2
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0C 0x00 0x0F 0x00 (WORD)TNS 0xAA tipotamanho N T E S (WORD)Valor
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)*tam 0x4F *STS (WORD)TNS
+.
+
+?Comando=2 //IX:1/1 Escrita
+?T='O'
+?barra=1
+:T=0x8C
+:s1=s1+1
+:x=Valor*(s1)
+:headerlen=headerlen+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0E 0x00 0x0F 0x00 (WORD)TNS 0xAB tipotamanho N T E S (WORD)s1 (WORD)x
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)*tam 0x4F *STS (WORD)TNS
+.
+
+?Comando=2 // I1:1 Escrita
+?T='I' //(Input) (word)
+:T=0x8C
+:headerlen=headerlen+2
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0C 0x00 0x0F 0x00 (WORD)TNS 0xAA tipotamanho N T E S (WORD)Valor
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)*tam 0x4F *STS (WORD)TNS
+.
+
+?Comando=2 // T4:1.ACC Escrita
+?T='T' //(Timer) (integer)
+?letratimer1='A'
+:E=ETimer
+:T=0x86
+:S=2
+:headerlen=headerlen+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0E 0x00 0x0F 0x00 (WORD)TNS 0xAB tipotamanho N T E S 0xFF 0xFF (WORD)Valor
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)*tam 0x4F *STS (WORD)TNS
+.
+
+?Comando=2 // T4:1.PRE Escrita
+?T='T' //(Timer) (integer)
+?letratimer1='P'
+:E=ETimer
+:T=0x86
+:S=1
+:headerlen=headerlen+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0E 0x00 0x0F 0x00 (WORD)TNS 0xAB tipotamanho N T E S 0xFF 0xFF (WORD)Valor
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)*tam 0x4F *STS (WORD)TNS
+.
+
+?Comando=2 // C5:1.PRE Escrita
+?T='C' //(Counter) (integer)
+?letratimer1='P'
+:E=ETimer
+:T=0x87
+:S=1
+:headerlen=headerlen+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0E 0x00 0x0F 0x00 (WORD)TNS 0xAB tipotamanho N T E S 0xFF 0xFF (WORD)Valor
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)*tam 0x4F *STS (WORD)TNS
+.
+
+?Comando=2 // C5:1.ACC Escrita
+?T='C' //(Counter) (integer)
+?letratimer1='A'
+:E=ETimer
+:T=0x87
+:S=2
+:headerlen=headerlen+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0E 0x00 0x0F 0x00 (WORD)TNS 0xAB tipotamanho N T E S 0xFF 0xFF (WORD)Valor
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)*tam 0x4F *STS (WORD)TNS
+.
+
+?Comando=2 // R6:1.LEN Escrita
+?T='R' //(Counter) (integer)
+?letratimer1='L'
+:E=ETimer
+:T=0x88
+:S=1
+:headerlen=headerlen+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0E 0x00 0x0F 0x00 (WORD)TNS 0xAB tipotamanho N T E S 0xFF 0xFF (WORD)Valor
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)*tam 0x4F *STS (WORD)TNS
+.
+
+?Comando=2 // R6:1.POS Escrita
+?T='R' //(Counter) (integer)
+?letratimer1='P'
+:E=ETimer
+:T=0x88
+:S=2
+:headerlen=headerlen+4
+>0x6F 0x00 (WORD)headerlen (DWORD)x1 (DWORD)status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 0x0E 0x00 0x0F 0x00 (WORD)TNS 0xAB tipotamanho N T E S 0xFF 0xFF (WORD)Valor
+<0x6F 0x00 (WORD)*x7 (DWORD)x1 (DWORD)*status (DOUBLE)context (DWORD)options (DWORD)CIP (WORD)*TimeOut1 0x02 0x00 0x85 0x00 (SW)IPCONF 0x91 0x00 (WORD)*tam 0x4F *STS (WORD)TNS
+.
+
+.
+$FORMATG
+:Valor=Param1[2,':']
+$END
+
+.
+$FORMATN
+:Valor=Param1[':','']
+$END
+
+.
+$CLOSECOMEVENT
+:session=0
+$SETGLOBAL(session)
+$END
+
+$REC
+Param1="N7:1","O0:0","B3:0/0"
+Param2="1","0","2","3","4","5"
+Conf=44818:10.1.1.1
+$END
+
+.
+$PARAM1.COMBO
+Ajuda...
+N7:1
+N7:2
+N7:3
+...
+T4:1.ACC
+T4:1.PRE
+T4:1.EN
+T4:1.TT
+T4:1.DN
+...
+C5:1.PRE
+C5:1.CX
+C5:1.CU
+C5:1.CD
+C5:1.DN
+C5:1.OV
+C5:1.UX
+C5:1.UN
+C5:1.UA
+...
+R6:1.LEN
+R6:1.POS
+R6:1.ER
+R6:1.EN
+R6:1.EU
+R6:1.DN
+R6:1.EM
+R6:1.UL
+R6:1.IN
+R6:1.FD
+...
+B3:1/0
+B3:1/1
+B3:1
+...
+I1:1/0
+I1:1/1
+I1:1
+...
+O0:1/0
+O0:1/1
+O0:1
+...
+F7:1
+S7:1
+$END
