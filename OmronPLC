@@ -1,0 +1,151 @@
+//Param1=type:address (0 a 6143 - CIO)
+//types: C-CIO L-LR H-HR T-TIMER PV D-DM A-AR
+//Param2=address
+//Example: Param1=C0 Param2=0
+ldriver 3.0
+:TimeOutBytes=50
+:Try=1
+:CacheTimeOut=300
+:Hold=0
+
+:letra1=Param1[1,1]
+:Canal=Param2
+:teste=Param1[2,8]
+:Param1=Param1[2,8]
+:temponto=Param1['.','.']
+:ponto=0
+
+?temponto>0
+:Param1=Param1[2,'.']
+:ponto=Param1['.',9]
+
+:qtde=TotalDeItens
+
+?qtde=0
+:qtde=1
+
+?qtde>30
+:qtde=30
+
+:n=qtde*4
+
+:letra2='R'
+
+?Comando=2
+:letra2='W'
+
+?letra1=0
+:letra1='R'
+
+?letra1='C'
+:letra1='R'
+
+?letra1='I'
+:letra1='R'
+
+?letra1='L'
+:letra1='L'
+
+?letra1='H'
+:letra1='H'
+
+?letra1='T'
+:letra1='C'
+
+?letra1='D'
+:letra1='D'
+
+?letra1='A'
+:letra1='J'
+
+:headercode=letra1*256+letra2
+:total=11+n
+
+?Comando=1 //Leitura
+>'@' (TEXTO[2])Canal (WORD)headercode (TEXTO[4])Param1.qtde.item (TEXTO[4])qtde {OMRONFCS} '*' 0x0D
+*total
+<'@' (TEXTO[2])Canal (WORD)headercode (HEXA[2])*endcode ...n<Param1.qtde.subitem>(HEXA[4])*valor {OMRONFCS2} '*' 0x0D
+?temponto>0
+:Valor=Bit(Valor,ponto,ponto)
+.
+
+?Comando=2 //Escrita
+?temponto=0
+:CacheTimeOut=0
+>'@' (TEXTO[2])Canal (WORD)headercode (TEXTO[4])Param1 (HEXA[4])Valor {OMRONFCS} '*' 0x0D
+*11
+<'@' (TEXTO[2])Canal (WORD)headercode (HEXA[2])*endcode {OMRONFCS2} '*' 0x0D
+.
+
+?Comando=2 //Escrita
+?temponto>0
+:CacheTimeOut=0
+>'@' (TEXTO[2])Canal 'R' letra1 (TEXTO[4])Param1 '0001' {OMRONFCS} '*' 0x0D
+*15
+<'@' (TEXTO[2])Canal 'R' letra1 (HEXA[2])*endcode (HEXA[4])*x {OMRONFCS2} '*' 0x0D
+:x1=exp(ln(2)*ponto)
+:bitx=Bit(x,ponto,ponto)
+?Valor>0
+?bitx=0
+:x1=int(x + x1)
+>'@' (TEXTO[2])Canal (WORD)headercode (TEXTO[4])Param1 (HEXA[4])x1 {OMRONFCS} '*' 0x0D
+*11
+<'@' (TEXTO[2])Canal (WORD)headercode (HEXA[2])*endcode {OMRONFCS2} '*' 0x0D
+.
+
+?Comando=2 //Escrita
+?temponto>0
+?Valor=0
+?bitx=1
+:x1=int(x-x1)
+>'@' (TEXTO[2])Canal (WORD)headercode (TEXTO[4])Param1 (HEXA[4])x1 {OMRONFCS} '*' 0x0D
+*11
+<'@' (TEXTO[2])Canal (WORD)headercode (HEXA[2])*endcode {OMRONFCS2} '*' 0x0D
+.
+
+.
+$FORMATG
+:Valor=Param1[1,1]
+$END
+
+.
+$FORMATN
+:Valor=Param1[2,8]
+$END
+
+.
+$REC
+Param1="I0.0"
+Param2="0","1","2","3","4","5"
+Conf=1:9600,E,7,2
+$END
+
+.
+$PARAM1.COMBO
+Ajuda...
+C0 - CIO 0
+C1 - CIO 1
+...
+I0 - IR 0
+I1 - IR 1
+...
+I0.0 - IR 0 bit 0
+I0.1 - IR 0 bit 1
+I0.2 - IR 0 bit 2
+...
+L0 - LR 0
+L1 - LR 1
+...
+H0 - HR 0
+H1 - HR 1
+...
+T0 - TIMER 0
+T1 - TIMER 1
+...
+D0 - DM 0
+D1 - DM 1
+...
+A0 - AR 0
+A1 - AR 1
+...
+$END
