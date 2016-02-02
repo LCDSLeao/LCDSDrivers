@@ -1,0 +1,179 @@
+//WEST 6100
+ldriver 3.0
+:TimeOutBytes=100
+:CacheTimeOut=100
+:Hold=0
+:Try=1
+:Addr=Canal
+?Comando=1 //Read
+?Parametro=0 //Value
+:Dado='M'
+$GOTO(1)
+
+?Comando=1 //Read
+?Parametro=1 //Value
+:Dado='S'
+:SLEEP(100)
+$GOTO(1)
+
+?Comando=1 //Read
+?Parametro=2 //Alarm 1
+:Dado='C'
+$GOTO(1)
+
+?Comando=1 //Read
+?Parametro=3 //Alarm 2
+:Dado='E'
+$GOTO(1)
+
+?Comando=2 //Write
+?Parametro=4 //Parameters
+$GOTO(2)
+
+?Comando=2 //Write
+?Parametro=1 //Set
+:Dado='S'
+$GOTO(2)
+
+?Comando=2 //Write
+?Parametro=2 //Alarme 1
+:Dado='C'
+$GOTO(2)
+
+?Comando=2 //Write
+?Parametro=3 //Alarme 2
+:Dado='E'
+$GOTO(2)
+
+?Comando=1 //Write
+?Parametro>=4 //tags
+$GOTO(1)
+
+?Comando=2 //Write
+?Parametro>=4 //tags
+$GOTO(2)
+
+$EXIT
+
+$LABEL(1)
+>'L' (TEXT[2])Addr Dado '?*'
+*11
+<'L' (TEXT[2])Addr Dado (TEXT[4])*Valor (TEXT[1])*Decimal 'A' '*'
+?Decimal>=5
+:Decimal=Decimal-5
+:Decimal=10^Decimal
+:Valor=-Valor/Decimal
+?Valor.Text='<??>' //ERRO
+$EXIT(5)
+
+?Decimal<5
+:Decimal=10^Decimal
+:Valor=Valor/Decimal
+?Valor.Text='<??>' //ERRO
+$EXIT(5)
+
+$EXIT
+
+$LABEL(2)
+:CacheTimeOut=0
+:Decimal=1
+>'L' (TEXT[2])Addr 'Q' '?*'
+*11
+<'L' (TEXT[2])Addr 'Q' (TEXT[4])*Decimal '0' 'A' '*'
+:x=10^Decimal
+:Valor=Valor*x
+?Valor<0
+:Decimal=Decimal+5
+:Valor=-Valor
+$GOTO(7)
+
+$GOTO(7)
+
+$LABEL(7)
+>'L' (TEXT[2])Addr Dado '#' (TEXT[4])Valor (TEXT[1])Decimal '*'
+<'L' (TEXT[2])Addr Dado (TEXT[4])*Valor (TEXT[1])*Decimal 'I' '*'
+*11
+>'L' (TEXT[2])Addr Dado 'I*'
+*11
+<'L' (TEXT[2])Addr Dado (TEXT[4])Valor (TEXT[1])*Decimal 'A' '*'
+:Decimal=10^Decimal
+:Valor=Valor/Decimal
+
+$TAGS
+Process Variable Offset
+offset
+:Dado='v'
+
+Scale Range Max
+rangemax
+:Dado='G'
+
+Scale Range Min
+rangemin
+:Dado='H'
+
+Scale Range Decimal Point
+decimal
+:Dado='Q'
+
+Input Filter Time Constant
+filtertime
+:Dado='m'
+
+Power Output value
+power
+:Dado='W'
+
+Output 1 Power Limit
+o1powerlimit
+:Dado='B'
+
+Output 1 Cycle Time
+o1cycletime
+:Dado='N'
+
+Output 2 Cycle Time
+o2cycletime
+:Dado='O'
+
+Recorded Output Scale Max.
+osmax
+:Dado='['
+
+Recorded Output Scale Min.
+osmin
+:Dado='\'
+
+Setpoint value
+wsetpoint
+:Dado='S'
+
+Setpoint Ramp Rate
+ramprate
+:Dado='^'
+
+Setpoint High Limit
+sethigh
+:Dado='A'
+
+Setpoint Low Limit
+setlow
+:Dado='T'
+
+Alarm 1 value
+alarm1
+:Dado='C'
+
+Alarm 2 value
+alarm2
+:Dado='E'
+
+Rate (Derivative Time Constant)
+dtime
+:Dado='D'
+
+Reset (Integral Time Constant)
+reset
+:Dado='I'
+
+$ENDTAGS
